@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Summary Tool</title>
   <style>
     body {
@@ -10,54 +10,56 @@
       background: #f7f7f7;
       margin: 0;
       padding: 30px;
-      max-width: 600px;
-      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
     h1 {
-      text-align: center;
       color: #333;
     }
     textarea {
       width: 100%;
+      max-width: 600px;
       height: 150px;
-      margin-top: 15px;
       padding: 10px;
       font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      margin-top: 15px;
       resize: vertical;
     }
     button {
       margin-top: 15px;
       padding: 10px 20px;
       font-size: 16px;
+      cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      border-radius: 4px;
     }
     #result {
       margin-top: 25px;
+      max-width: 600px;
       padding: 15px;
       background: #fff;
       border: 1px solid #ccc;
       min-height: 60px;
-      border-radius: 8px;
     }
     .footer {
-      text-align: right;
+      margin-top: 40px;
       font-size: 14px;
-      margin-top: 30px;
       color: #777;
     }
   </style>
 </head>
 <body>
+
   <h1>AI Summary Tool</h1>
   <textarea id="inputText" placeholder="Wklej tutaj tekst do streszczenia..."></textarea>
   <button onclick="sendToWebhook()">Streszcz</button>
   <div id="result"></div>
+
   <div class="footer">By Tom Abram</div>
 
   <script>
@@ -68,21 +70,25 @@
         return;
       }
 
+      document.getElementById("result").innerText = "⏳ Przetwarzanie...";
+
       try {
         const response = await fetch("https://c7e7-78-146-6-36.ngrok-free.app/webhook/ai-summary-http", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({ body: input })
         });
 
         const data = await response.json();
-        document.getElementById("result").innerText =
-          data?.choices?.[0]?.message?.content || "Brak odpowiedzi z AI.";
-      } catch (err) {
-        alert("Błąd przy wysyłaniu do webhooka.");
-        console.error(err);
+        document.getElementById("result").innerText = data || "Brak odpowiedzi.";
+      } catch (error) {
+        document.getElementById("result").innerText = "❌ Błąd połączenia z webhookiem.";
+        console.error(error);
       }
     }
   </script>
+
 </body>
 </html>
